@@ -9,7 +9,7 @@ using CMS.Infrastructure.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add database
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -34,9 +34,25 @@ builder.Services.AddScoped<IMenuItemService, MenuItemService>();
 builder.Services.AddScoped<IPageContentService, PageContentService>();
 builder.Services.AddScoped<IStyleConfigService, StyleConfigService>();
 
-// Add Razor Pages
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
+// Add Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// Add Razor Pages and Controllers (including controllers from CMS.API)
 builder.Services.AddRazorPages();
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddApplicationPart(typeof(CMS.API.Controllers.PagesController).Assembly);
 
 var app = builder.Build();
 
@@ -52,11 +68,20 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseCors("AllowAll");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapRazorPages();
+// Swagger — available in development only
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
 app.MapControllers();
+app.MapRazorPages();
 
 // Seed database
 using (var scope = app.Services.CreateScope())
@@ -67,4 +92,3 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
-
