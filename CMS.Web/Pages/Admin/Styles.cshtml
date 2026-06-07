@@ -1,0 +1,65 @@
+@page
+@model CMS.Web.Pages.Admin.StylesModel
+@{
+    ViewData["Title"] = "Manage Styles";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1>Style Configuration</h1>
+            <p class="text-muted">Customize CSS for content elements</p>
+        </div>
+    </div>
+
+    @if (Model.Styles != null && Model.Styles.Any())
+    {
+        @foreach (var style in Model.Styles)
+        {
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="mb-0">@style.ElementType</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-page-handler="Update">
+                        <input type="hidden" name="styleId" value="@style.Id" />
+                        <div class="form-group mb-3">
+                            <label for="cssStyles_@style.Id">CSS Styles</label>
+                            <textarea class="form-control" id="cssStyles_@style.Id" name="cssStyles" rows="4">@style.CssStyles</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                    </form>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="alert alert-info">No styles configured yet.</div>
+    }
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0">Add New Style</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" asp-page-handler="Create">
+                <div class="form-group mb-3">
+                    <label for="elementType">Element Type</label>
+                    <select class="form-control" id="elementType" name="elementType" required>
+                        <option>-- Select --</option>
+                        <option value="heading">Heading</option>
+                        <option value="text">Text</option>
+                        <option value="image">Image</option>
+                        <option value="link">Link</option>
+                    </select>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="newCssStyles">CSS Styles</label>
+                    <textarea class="form-control" id="newCssStyles" name="cssStyles" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Create</button>
+            </form>
+        </div>
+    </div>
+</div>

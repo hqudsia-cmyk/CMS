@@ -1,0 +1,58 @@
+ @page "/page/{slug}"
+@model CMS.Web.Pages.CmsPageModel
+@{
+    ViewData["Title"] = Model.CurrentPage?.Title ?? "Page";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-3">
+            <nav class="navbar-nav flex-column">
+                <h5 class="mb-3">Menu</h5>
+                @if (Model.MenuItems != null && Model.MenuItems.Any())
+                {
+                    @foreach (var item in Model.MenuItems)
+                    {
+                        <a class="nav-link @(item.Slug == Model.Slug ? "active" : "")" href="/page/@item.Slug">@item.Title</a>
+                    }
+                }
+            </nav>
+        </div>
+        <div class="col-md-9">
+            @if (Model.CurrentPage != null)
+            {
+                <h1>@Model.CurrentPage.Title</h1>
+                <small class="text-muted">Visitors: @Model.CurrentPage.VisitorCount</small>
+
+                <hr />
+
+                @if (Model.PageContents != null && Model.PageContents.Any())
+                {
+                    @foreach (var content in Model.PageContents)
+                    {
+                        @if (content.ContentType == "heading")
+                        {
+                            <h2 class="@content.CssClass">@Html.Raw(content.Content)</h2>
+                        }
+                        else if (content.ContentType == "text")
+                        {
+                            <p class="@content.CssClass">@Html.Raw(content.Content)</p>
+                        }
+                        else if (content.ContentType == "image")
+                        {
+                            <img src="@content.Content" class="img-fluid @content.CssClass" alt="Page image" />
+                        }
+                        else if (content.ContentType == "link")
+                        {
+                            <a href="@content.Content" class="btn btn-primary @content.CssClass">View</a>
+                        }
+                    }
+                }
+                else
+                {
+                    <p class="text-muted">No content yet.</p>
+                }
+            }
+        </div>
+    </div>
+</div>

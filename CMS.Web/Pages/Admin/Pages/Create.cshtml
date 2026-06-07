@@ -1,0 +1,123 @@
+@page
+@model CMS.Web.Pages.Admin.Pages.CreateModel
+@{
+    ViewData["Title"] = "Create Page";
+}
+
+<div class="container mt-4">
+    <h1>Create Page</h1>
+    <hr />
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Slug" class="form-label"></label>
+                    <input asp-for="Slug" class="form-control" />
+                    <span asp-validation-for="Slug" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="MenuItemId" class="form-label">Menu Item</label>
+                    <select asp-for="MenuItemId" class="form-select" asp-items="Model.MenuOptions">
+                        <option value="">-- Select Menu Item --</option>
+                    </select>
+                    <span asp-validation-for="MenuItemId" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <h4>Content Blocks</h4>
+        <div id="content-blocks">
+            <div class="content-block border rounded p-3 mb-3" data-index="0">
+                <div class="row">
+                    <div class="col-md-2 mb-2">
+                        <label class="form-label">Type</label>
+                        <select name="Contents[0].ContentType" class="form-select">
+                            <option value="heading">Heading</option>
+                            <option value="text">Text</option>
+                            <option value="image">Image</option>
+                            <option value="link">Link</option>
+                        </select>
+                    </div>
+                    <div class="col-md-1 mb-2">
+                        <label class="form-label">Order</label>
+                        <input name="Contents[0].Order" type="number" class="form-control" value="1" />
+                    </div>
+                    <div class="col-md-8 mb-2">
+                        <label class="form-label">Content</label>
+                        <textarea name="Contents[0].Content" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="col-md-1 mb-2 d-flex align-items-end">
+                        <button type="button" class="btn btn-outline-danger btn-sm remove-block">Remove</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="button" id="add-block" class="btn btn-outline-secondary mb-4">+ Add Block</button>
+
+        <div>
+            <button type="submit" class="btn btn-success">Create Page</button>
+            <a href="/Admin/Pages" class="btn btn-secondary ms-2">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    let blockIndex = 1;
+
+    document.getElementById('add-block').addEventListener('click', function () {
+        const container = document.getElementById('content-blocks');
+        const block = document.createElement('div');
+        block.className = 'content-block border rounded p-3 mb-3';
+        block.dataset.index = blockIndex;
+        block.innerHTML = `
+            <div class="row">
+                <div class="col-md-2 mb-2">
+                    <label class="form-label">Type</label>
+                    <select name="Contents[${blockIndex}].ContentType" class="form-select">
+                        <option value="heading">Heading</option>
+                        <option value="text">Text</option>
+                        <option value="image">Image</option>
+                        <option value="link">Link</option>
+                    </select>
+                </div>
+                <div class="col-md-1 mb-2">
+                    <label class="form-label">Order</label>
+                    <input name="Contents[${blockIndex}].Order" type="number" class="form-control" value="${blockIndex + 1}" />
+                </div>
+                <div class="col-md-8 mb-2">
+                    <label class="form-label">Content</label>
+                    <textarea name="Contents[${blockIndex}].Content" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="col-md-1 mb-2 d-flex align-items-end">
+                    <button type="button" class="btn btn-outline-danger btn-sm remove-block">Remove</button>
+                </div>
+            </div>`;
+        container.appendChild(block);
+        blockIndex++;
+    });
+
+    document.getElementById('content-blocks').addEventListener('click', function (e) {
+        if (e.target.classList.contains('remove-block')) {
+            e.target.closest('.content-block').remove();
+        }
+    });
+
+    document.getElementById('Title').addEventListener('input', function () {
+        const slug = document.getElementById('Slug');
+        if (!slug.dataset.manual) {
+            slug.value = this.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        }
+    });
+
+    document.getElementById('Slug').addEventListener('input', function () {
+        this.dataset.manual = 'true';
+    });
+</script>

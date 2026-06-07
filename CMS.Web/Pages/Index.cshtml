@@ -1,0 +1,56 @@
+@page
+@model CMS.Web.Pages.IndexModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-3">
+            <nav class="navbar-nav flex-column">
+                <h5 class="mb-3">Menu</h5>
+                @if (Model.MenuItems != null && Model.MenuItems.Any())
+                {
+                    @foreach (var item in Model.MenuItems)
+                    {
+                        <a class="nav-link" href="/page/@item.Slug">@item.Title</a>
+                    }
+                }
+            </nav>
+        </div>
+        <div class="col-md-9">
+            @if (Model.CurrentPage != null)
+            {
+                <h1>@Model.CurrentPage.Title</h1>
+                <small class="text-muted">Visitors: @Model.CurrentPage.VisitorCount</small>
+
+                @if (Model.PageContents != null && Model.PageContents.Any())
+                {
+                    @foreach (var content in Model.PageContents)
+                    {
+                        @if (content.ContentType == "heading")
+                        {
+                            <h2 class="@content.CssClass">@Html.Raw(content.Content)</h2>
+                        }
+                        else if (content.ContentType == "text")
+                        {
+                            <p class="@content.CssClass">@Html.Raw(content.Content)</p>
+                        }
+                        else if (content.ContentType == "image")
+                        {
+                            <img src="@content.Content" class="img-fluid @content.CssClass" alt="Page image" />
+                        }
+                        else if (content.ContentType == "link")
+                        {
+                            <a href="@content.Content" class="btn btn-primary @content.CssClass">Link</a>
+                        }
+                    }
+                }
+            }
+            else
+            {
+                <div class="alert alert-info">Welcome to our CMS. Please select a page from the menu.</div>
+            }
+        </div>
+    </div>
+</div>

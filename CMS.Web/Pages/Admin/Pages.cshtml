@@ -1,0 +1,50 @@
+@page
+@model CMS.Web.Pages.Admin.PagesModel
+@{
+    ViewData["Title"] = "Manage Pages";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1>Pages</h1>
+            <a href="/Admin/Pages/Create" class="btn btn-success">Create New Page</a>
+        </div>
+    </div>
+
+    @if (Model.Pages != null && Model.Pages.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Title</th>
+                        <th>Slug</th>
+                        <th>Visitors</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model.Pages)
+                    {
+                        <tr>
+                            <td>@p.Title</td>
+                            <td>@p.Slug</td>
+                            <td>@p.VisitorCount</td>
+                            <td>@p.CreatedAt.ToShortDateString()</td>
+                            <td>
+                                <a href="/Admin/Pages/Edit/@p.Id" class="btn btn-sm btn-primary">Edit</a>
+                                <a href="/Admin/Pages/Delete/@p.Id" class="btn btn-sm btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">No pages created yet. <a href="/Admin/Pages/Create">Create one now</a></div>
+    }
+</div>

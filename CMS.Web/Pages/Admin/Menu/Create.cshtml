@@ -1,0 +1,50 @@
+@page
+@model CMS.Web.Pages.Admin.Menu.CreateModel
+@{
+    ViewData["Title"] = "Create Menu Item";
+}
+
+<div class="container mt-4">
+    <h1>Create Menu Item</h1>
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="MenuItem.Title" class="form-label"></label>
+                    <input asp-for="MenuItem.Title" class="form-control" />
+                    <span asp-validation-for="MenuItem.Title" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="MenuItem.Slug" class="form-label"></label>
+                    <input asp-for="MenuItem.Slug" class="form-control" />
+                    <span asp-validation-for="MenuItem.Slug" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="MenuItem.Order" class="form-label"></label>
+                    <input asp-for="MenuItem.Order" class="form-control" type="number" />
+                    <span asp-validation-for="MenuItem.Order" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="MenuItem.ParentId" class="form-label">Parent Item (optional)</label>
+                    <select asp-for="MenuItem.ParentId" class="form-select" asp-items="Model.ParentOptions">
+                        <option value="">-- None (root item) --</option>
+                    </select>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input asp-for="MenuItem.IsVisible" class="form-check-input" />
+                    <label asp-for="MenuItem.IsVisible" class="form-check-label">Visible</label>
+                </div>
+
+                <button type="submit" class="btn btn-success">Create</button>
+                <a href="/Admin/Menu" class="btn btn-secondary ms-2">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
